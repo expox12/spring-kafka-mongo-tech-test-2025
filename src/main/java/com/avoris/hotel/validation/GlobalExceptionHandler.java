@@ -1,5 +1,7 @@
 package com.avoris.hotel.validation;
 
+import com.avoris.hotel.dto.ErrorResponse;
+import com.avoris.hotel.dto.FieldErrorResponse;
 import com.avoris.hotel.models.SearchNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

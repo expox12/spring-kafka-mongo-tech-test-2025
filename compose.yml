@@ -1,15 +1,15 @@
 services:
 
-  mongo:
-    container_name: mongo
-    image: mongo
+  s-mongo:
+    container_name: c-mongo
+    image: mongo:8.2.2
     restart: always
     ports:
       - 27017:27017
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
-      MONGO_INITDB_DATABASE: hotel
+      MONGO_INITDB_DATABASE: hoteldocke
     healthcheck:
       test: [ "CMD", "mongosh", "--eval", "db.runCommand('ping').ok == 1" ]
       interval: 10s
@@ -20,22 +20,22 @@ services:
     networks:
       - mongo-net
 
-  mongo-express:
-    container_name: mongo-express
-    image: mongo-express
+  s-mongo-express:
+    container_name: c-mongo-express
+    image: mongo-express:1.0.2
     restart: always
     ports:
       - 8081:8081
     environment:
-      ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
+      ME_CONFIG_MONGODB_URL: mongodb://root:example@s-mongo:27017/
       ME_CONFIG_BASICAUTH_ENABLED: false
       ME_CONFIG_BASICAUTH: false
     depends_on:
-      - mongo
+      - s-mongo
     networks:
       - mongo-net
 
-  kafka:
+  s-kafka:
     image: apache/kafka:4.1.0
     container_name: c-kafka
     restart: unless-stopped
@@ -55,7 +55,33 @@ services:
       KAFKA_INTER_BROKER_LISTENER_NAME: DOCKER
       # Required for a single node cluster
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - kafka-net
+
+  s-search-service:
+    build:
+      context: .
+    container_name: c-search-service
+    restart: unless-stopped
+    ports:
+      - 8080:8080
+    environment:
+      SPRING_DATA_MONGODB_URI: mongodb://hotel_user:hotel_pass@s-mongo:27017/hotel?authSource=hotel
+      SPRING_DATA_TEST_MONGODB_URI: mongodb://hotel_test_user:hotel_test_pass@s-mongo:27017/hotel_test?authSource=hotel_test
+      KAFKA_BOOTSTRAP_SERVERS: s-kafka:9093
+    depends_on:
+      s-mongo:
+        condition: service_healthy
+      s-kafka:
+        condition: service_started
+    networks:
+      - kafka-net
+      - mongo-net
+    profiles:
+      - prod
 
 networks:
+  kafka-net:
+    driver: bridge
   mongo-net:
     driver: bridge

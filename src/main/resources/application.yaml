@@ -6,7 +6,7 @@ spring:
     name: hotel
 
   mongodb:
-    uri: mongodb://hotel_user:hotel_pass@localhost:27017/hotel?authSource=hotel
+    uri: ${SPRING_DATA_MONGODB_URI:mongodb://hotel_user:hotel_pass@localhost:27017/hotel?authSource=hotel}
 
   kafka:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}

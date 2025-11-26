@@ -1,4 +1,4 @@
-package com.avoris.hotel.validation;
+package com.avoris.hotel.dto;
 
 import java.time.LocalDateTime;
 import java.util.List;

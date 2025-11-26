@@ -7,21 +7,21 @@ import java.util.List;
 
 @CheckInBeforeCheckOut
 public record SearchRequest(
-        @NotNull(message = "No puede ser nulo")
-        @NotBlank(message = "No debe quedar en blanco")
+        @NotNull(message = "Cannot be null")
+        @NotBlank(message = "Cannot be empty")
         String hotelId,
 
-        @NotBlank(message = "No debe quedar en blanco")
-        @NotNull(message = "No puede ser nulo")
-        @Pattern(regexp = "^\\d{2}/\\d{2}/\\d{4}$", message = "La fecha debe ser dd/MM/yyyy")
+        @NotBlank(message = "Cannot be empty")
+        @NotNull(message = "Cannot be null")
+        @Pattern(regexp = "^\\d{2}/\\d{2}/\\d{4}$", message = "The date must be in the following format: dd/MM/yyyy")
         String checkIn,
 
-        @NotBlank(message = "No debe quedar en blanco")
-        @NotNull(message = "No puede ser nulo")
-        @Pattern(regexp = "^\\d{2}/\\d{2}/\\d{4}$", message = "La fecha debe ser dd/MM/yyyy")
+        @NotBlank(message = "Cannot be empty")
+        @NotNull(message = "Cannot be null")
+        @Pattern(regexp = "^\\d{2}/\\d{2}/\\d{4}$", message = "The date must be in the following format: dd/MM/yyyy")
         String checkOut,
 
-        @NotEmpty(message = "No puede estar vacío")
-        @NotNull(message = "No puede ser nulo")
+        @NotEmpty(message = "Cannot be empty")
+        @NotNull(message = "Cannot be null")
         List<@Min(0) Integer> ages
 ) {}

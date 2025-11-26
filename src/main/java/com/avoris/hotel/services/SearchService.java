@@ -23,7 +23,6 @@ public class SearchService {
     public SearchIdResponse createSearch(SearchRequest request) {
         String searchId = UUID.randomUUID().toString();
         SearchMessage searchMessage = searchMapper.toSearchMessage(searchId, request);
-        searchMessage.checkIn().minusDays(1);
         kafkaTemplate.publishMessage(searchMessage);
         return new SearchIdResponse(searchId);
     }

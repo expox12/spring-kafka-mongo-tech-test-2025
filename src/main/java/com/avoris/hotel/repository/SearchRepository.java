@@ -19,11 +19,8 @@ public interface SearchRepository extends MongoRepository<SearchEntity, String> 
     """, count = true)
     long countSimilar(
             String hotelId,
-            LocalDate checkInGte,
-            LocalDate checkInLte,
-            LocalDate checkOutGte,
-            LocalDate checkOutLte,
-            List<Integer> ages,
-            int size
+            LocalDate checkInGte, LocalDate checkInLte,
+            LocalDate checkOutGte, LocalDate checkOutLte,
+            List<Integer> ages, int size
     );
 }

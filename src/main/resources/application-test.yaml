@@ -1,0 +1,8 @@
+spring:
+
+  mongodb:
+    uri: ${SPRING_DATA_TEST_MONGODB_URI:mongodb://hotel_test_user:hotel_test_pass@localhost:27017/hotel_test?authSource=hotel_test}
+
+logging:
+  level:
+    org.springframework.data.mongodb.core.MongoTemplate: DEBUG

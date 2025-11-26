@@ -30,7 +30,7 @@ public class CheckInBeforeCheckOutValidator implements ConstraintValidator<Check
             if (!checkInDate.isBefore(checkOutDate)) {
                 context.disableDefaultConstraintViolation();
                 context.buildConstraintViolationWithTemplate(
-                        "checkIn (" + request.checkIn() + ") debe ser anterior a checkOut (" + request.checkOut() + ")"
+                        "checkIn (" + request.checkIn() + ") must be before checkOut (" + request.checkOut() + ")"
                 ).addPropertyNode("checkIn").addConstraintViolation();
                 return false;
             }
@@ -38,7 +38,7 @@ public class CheckInBeforeCheckOutValidator implements ConstraintValidator<Check
             return true;
         } catch (NullPointerException | DateTimeParseException e) {
             context.disableDefaultConstraintViolation();
-            context.buildConstraintViolationWithTemplate("Formato de fecha inválido")
+            context.buildConstraintViolationWithTemplate("Invalid date format")
                     .addConstraintViolation();
             return false;
         }
