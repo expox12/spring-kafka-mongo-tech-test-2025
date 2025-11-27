@@ -17,7 +17,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.time.LocalDate;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -27,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(SearchController.class)
-public class SearchControllerMvcTest {
+class SearchControllerMvcTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -50,7 +49,7 @@ public class SearchControllerMvcTest {
         );
 
         when(searchService.createSearch(req)).thenReturn(new SearchIdResponse("abc-123"));
-        mockMvc.perform(post("/api/search")
+        mockMvc.perform(post("/search")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isOk())
@@ -66,7 +65,7 @@ public class SearchControllerMvcTest {
                 List.of(30, 29, 1, 3)
         );
 
-        mockMvc.perform(post("/api/search")
+        mockMvc.perform(post("/search")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isBadRequest())
@@ -84,7 +83,7 @@ public class SearchControllerMvcTest {
                 List.of(30, 29, 1, 3)
         );
 
-        mockMvc.perform(post("/api/search")
+        mockMvc.perform(post("/search")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isBadRequest())
@@ -101,7 +100,7 @@ public class SearchControllerMvcTest {
                 List.of()
         );
 
-        mockMvc.perform(post("/api/search")
+        mockMvc.perform(post("/search")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isBadRequest())
@@ -117,7 +116,7 @@ public class SearchControllerMvcTest {
                 List.of(30, -1, 5)
         );
 
-        mockMvc.perform(post("/api/search")
+        mockMvc.perform(post("/search")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isBadRequest())
@@ -136,12 +135,12 @@ public class SearchControllerMvcTest {
 
         when(searchService.createSearch(req)).thenReturn(new SearchIdResponse("ABC123"));
 
-        mockMvc.perform(post("/api/search")
+        mockMvc.perform(post("/search")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isOk());
 
-        verify(searchService).createSearch(eq(req));
+        verify(searchService).createSearch(req);
     }
 
     @Test
@@ -157,10 +156,9 @@ public class SearchControllerMvcTest {
                         List.of(5,7)),
                 2
         );
+        when(searchCountService.countSimilar(searchId)).thenReturn(mockResponse);
 
-        when(searchCountService.countSimilar(eq(searchId))).thenReturn(mockResponse);
-
-        mockMvc.perform(get("/api/count")
+        mockMvc.perform(get("/count")
                         .param("searchId", searchId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -170,7 +168,7 @@ public class SearchControllerMvcTest {
                 .andExpect(jsonPath("$.search.ages[0]").value(5))
                 .andExpect(jsonPath("$.search.ages[1]").value(7));
 
-        verify(searchCountService).countSimilar(eq(searchId));
+        verify(searchCountService).countSimilar(searchId);
     }
 }
 

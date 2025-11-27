@@ -5,8 +5,6 @@ import com.avoris.hotel.dto.SearchResponse;
 import com.avoris.hotel.models.SearchEntity;
 import com.avoris.hotel.models.SearchNotFoundException;
 import com.avoris.hotel.repository.SearchRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -14,7 +12,6 @@ import java.util.List;
 
 @Service
 public class SearchCountService {
-    private static final Logger log = LoggerFactory.getLogger(SearchCountService.class);
 
     private final SearchRepository searchRepository;
 

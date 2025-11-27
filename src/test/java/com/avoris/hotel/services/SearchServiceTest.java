@@ -5,6 +5,7 @@ import com.avoris.hotel.dto.SearchMessage;
 import com.avoris.hotel.dto.SearchRequest;
 import com.avoris.hotel.kafka.SearchProducer;
 import com.avoris.hotel.mapper.SearchMapper;
+import com.avoris.hotel.models.ObjectIdGenerator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -21,17 +22,19 @@ import static org.mockito.Mockito.when;
 
 class SearchServiceTest {
 
-    private SearchProducer kafkaTemplate;
+    private ObjectIdGenerator objectIdGenerator;
     private SearchMapper mapper;
+    private SearchProducer kafkaTemplate;
 
     private SearchService searchService;
 
     @BeforeEach
     void setup() {
-        kafkaTemplate = Mockito.mock(SearchProducer.class);
+        objectIdGenerator = Mockito.mock(ObjectIdGeneratorService.class);
         mapper = Mockito.mock(SearchMapper.class);
+        kafkaTemplate = Mockito.mock(SearchProducer.class);
 
-        searchService = new SearchService(kafkaTemplate, mapper);
+        searchService = new SearchService(kafkaTemplate, mapper, objectIdGenerator);
     }
 
     @Test
@@ -51,17 +54,18 @@ class SearchServiceTest {
                 List.of(5, 7)
         );
 
+        when(objectIdGenerator.generate()).thenReturn("RANDOM_12345");
         when(mapper.toSearchMessage(anyString(), eq(request))).thenReturn(mappedMessage);
 
         SearchIdResponse response = searchService.createSearch(request);
 
         assertThat(response).isNotNull();
-        assertThat(response.searchId()).isNotNull();
+        assertThat(response.searchId()).isEqualTo("RANDOM_12345");
 
         ArgumentCaptor<String> searchIdCaptor = ArgumentCaptor.forClass(String.class);
         verify(mapper).toSearchMessage(searchIdCaptor.capture(), eq(request));
 
-        assertThat(searchIdCaptor.getValue()).isEqualTo(response.searchId());
+        assertThat(searchIdCaptor.getValue()).isEqualTo("RANDOM_12345");
 
         verify(kafkaTemplate).publishMessage(mappedMessage);
     }

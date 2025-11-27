@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(path = "/api")
+@RequestMapping
 public class SearchController {
 
     private final SearchService searchService;

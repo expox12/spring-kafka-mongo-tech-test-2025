@@ -51,7 +51,7 @@ Una vez todo está arriba, el backend queda disponible en:
 
 ### ➤ 4.1 Crear búsqueda
 ```bash
-curl -X POST http://localhost:8080/api/search \
+curl -X POST http://localhost:8080/search \
 -H "Content-Type: application/json" \
 -d '{
 "hotelId": "H100",
@@ -69,7 +69,7 @@ Respuesta esperada:
 
 ### ➤ 4.2 Consultar búsquedas similares
 ```bash
-curl "http://localhost:8080/api/count?searchId=ID_DEVUELTO"
+curl "http://localhost:8080/count?searchId=ID_DEVUELTO"
 ```
 Respuesta esperada:
 ```json
@@ -84,3 +84,8 @@ Respuesta esperada:
   "count": 3
 }
 ```
+El método `countSimilar` del servicio `SearchCountService` tiene como objetivo contar las búsquedas similares en función de los parámetros de fechas de entrada/salida y edades de los participantes. La consulta utiliza un rango flexible de ±1 día para las fechas y compara las edades de las personas. El criterio es el siguiente:
+
+1. **Fechas**: Se permiten búsquedas similares si las fechas de **checkIn** y **checkOut** están dentro de un margen de ±1 día con respecto a la búsqueda original.
+2. **Edades**: Las búsquedas similares se agrupan según el número de personas y sus edades sin importar el orden.
+3. **Hotel**: Solo se consideran búsquedas similares dentro del mismo **hotel** (`hotelId`).
