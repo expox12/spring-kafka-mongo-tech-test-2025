@@ -84,7 +84,7 @@ Respuesta esperada:
   "count": 3
 }
 ```
-El método `countSimilar` del servicio `SearchCountService` tiene como objetivo contar las búsquedas similares en función de los parámetros de fechas de entrada/salida y edades de los participantes. La consulta utiliza un rango flexible de ±1 día para las fechas y compara las edades de las personas. El criterio es el siguiente:
+El método `countSimilar` del servicio `SearchCountService` tiene como objetivo contar las búsquedas similares en función de los parámetros de fechas de entrada/salida y edades. La consulta utiliza un rango flexible de ±1 día para las fechas y compara las edades de las personas. El criterio es el siguiente:
 
 1. **Fechas**: Se permiten búsquedas similares si las fechas de **checkIn** y **checkOut** están dentro de un margen de ±1 día con respecto a la búsqueda original.
 2. **Edades**: Las búsquedas similares se agrupan según el número de personas y sus edades sin importar el orden.

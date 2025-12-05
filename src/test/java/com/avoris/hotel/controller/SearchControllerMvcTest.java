@@ -4,6 +4,7 @@ import com.avoris.hotel.dto.SearchCountResponse;
 import com.avoris.hotel.dto.SearchIdResponse;
 import com.avoris.hotel.dto.SearchRequest;
 import com.avoris.hotel.dto.SearchResponse;
+import com.avoris.hotel.models.SearchNotFoundException;
 import com.avoris.hotel.services.SearchCountService;
 import com.avoris.hotel.services.SearchService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,7 +22,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -69,7 +69,7 @@ class SearchControllerMvcTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isBadRequest())
-                .andDo(print())
+                .andExpect(jsonPath("$.errorCode").value("VALIDATION_ERROR"))
                 .andExpect(jsonPath("$.errors[0].defaultMessage")
                         .value("checkIn (01/12/2025) must be before checkOut (30/11/2025)"));
     }
@@ -125,7 +125,7 @@ class SearchControllerMvcTest {
     }
 
     @Test
-    void shouldVerifyCallSearchCountService() throws Exception {
+    void testSearchShouldVerifyCallSearchCountService() throws Exception {
         SearchRequest req = new SearchRequest(
                 "H100",
                 "24/11/2025",
@@ -144,7 +144,7 @@ class SearchControllerMvcTest {
     }
 
     @Test
-    void search_shouldReturnSearchCountResponse() throws Exception {
+    void testSearchShouldReturnSearchCountResponse() throws Exception {
         final String searchId = "ABC123";
 
         SearchCountResponse mockResponse = new SearchCountResponse(
@@ -169,6 +169,22 @@ class SearchControllerMvcTest {
                 .andExpect(jsonPath("$.search.ages[1]").value(7));
 
         verify(searchCountService).countSimilar(searchId);
+    }
+
+    @Test
+    void testCountSimilarWithInvalidSearchId() throws Exception {
+        final String searchId = "ABC123";
+
+        when(searchCountService.countSimilar(searchId)).thenThrow(new SearchNotFoundException(searchId));
+
+        mockMvc.perform(get("/count")
+                        .param("searchId", searchId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message")
+                        .value("Search with id ABC123 not found"))
+                .andExpect(jsonPath("$.errorCode").value("NOT_FOUND"))
+                .andExpect(jsonPath("$.errors").isEmpty());
     }
 }
 
